@@ -1,22 +1,43 @@
 
-fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues").then((res) => res.json()).then((json) =>{
-    console.log(json.data) ;
-    console.log(json.data.length) ; 
-    issueCount.innerText=`${json.data.length} Issues` ; 
-    displayData(json.data) ;
-}); 
-
 const issueCount = document.getElementById('issues-cnt'); 
 const itemsContainer = document.getElementById('items-container') ; 
+const allBtn = document.getElementById('all-btn') ;
+const openBtn = document.getElementById('open-btn') ;
+const closedBtn = document.getElementById('closed-btn') ;
 console.log(itemsContainer) ;
 
-function displayData(data){
+
+const getData = async ()=>{
+   const jsonRes = await fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues"); 
+   const jsonData = await jsonRes.json() ; 
+   console.log(jsonData.data) ; 
+   return jsonData.data; 
+}
+
+
+async function displayData(state){
+    let data =await getData() ; 
+    itemsContainer.replaceChildren() ; 
+   // console.log(data);
+   // filter the data according to state 0 - all , 1- open , 2-closed
+   if(state == 1 ){
+        data = data.filter((data) => data.status == "open") ;
+        console.log(data) ;
+   }
+   else if(state == 2 ){
+        data = data.filter((data) => data.status == "closed") ;
+        console.log(data) ; 
+   }
+   else{
+    // do nothing if state 0 
+   }
+    issueCount.innerText=`${data.length} Issues` ; 
 
     data.forEach(element => {
         const newElement = document.createElement('div')  ; 
 
         newElement.innerHTML=`
-             <div class="issue-card p-5 flex flex-col gap-5 ">
+             <div onclick="displayModal(${element.id})" class="issue-card p-5 flex flex-col gap-5 ">
                 <div class="flex flex-wrap justify-between items-center">
                     <img src= ${element.status== "open" ? "./assets/Open-Status.png" : "./assets/Closed-Status.png"} alt="closed">
                     <h2 class="priority px-4 py-2 text-xl font-bold rounded-4xl">
@@ -67,4 +88,45 @@ function displayData(data){
     });
     
 }
+
+function removeBtnActive(){
+    allBtn.classList.remove('btn-primary') ; 
+    openBtn.classList.remove('btn-primary') ; 
+    closedBtn.classList.remove('btn-primary'); 
+}
+
+allBtn.addEventListener('click' , ()=>{
+    removeBtnActive(); 
+    allBtn.classList.add('btn-primary') ; 
+    displayData(0) ; 
+})
+
+
+openBtn.addEventListener('click' , ()=>{
+     removeBtnActive(); 
+    openBtn.classList.add('btn-primary') ; 
+    displayData(1) ; 
+})
+
+
+closedBtn.addEventListener('click' , ()=>{
+     removeBtnActive(); 
+    closedBtn.classList.add('btn-primary') ; 
+    displayData(2) ; 
+})
+
+function displayModal(id){
+    fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`).then((res) => res.json()).then((json) =>{
+        console.log(json.data) ;
+        my_modal_5.showModal();
+
+        
+
+        
+    })
+}
+
+
+
+displayData(0); 
 
