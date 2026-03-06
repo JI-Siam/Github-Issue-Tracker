@@ -18,14 +18,14 @@
                 </div>
 
                 <div class="flex gap-2 ">
-                         <input type="text" placeholder="Search Issues" class="input input-bordered w-24 md:w-auto" />
+                         <input id="search-input" type="text" placeholder="Search Issues" class="input input-bordered w-24 md:w-auto" />
 
                          <button class="btn btn-primary">+ New Issues</button>
                 </div>
         </nav>
     </header>
 
-    <section class="toggle-section m-5 sm:m-20">
+    <section class="toggle-section m-5 sm:mx-20">
         <div id="toggle-container" class=" flex gap-3 flex-wrap border-2 border-gray-100 rounded-xl py-5 px-10">
             <button id="all-btn" class="btn btn-primary">All</button>
             <button id="open-btn" class="btn">Open</button>
@@ -33,7 +33,7 @@
         </div>
     </section>
 
-    <section class="stats-section m-5 sm:m-20">
+    <section class="stats-section m-5 sm:mx-20">
          <div class="stats-container flex flex-wrap gap-10 justify-between items-center mt-10 border-2 border-gray-100 rounded-xl py-5 px-10">
             <div class="flex justify-center items-center gap-5">
                 <div  class="bg-purple-100 rounded-full p-3">
@@ -56,24 +56,17 @@
         </div>
     </section>
 
-    <section class="items-section m-5 sm:m-20 p-5  border-2 border-gray-50">
+    <section class="items-section m-5 sm:mx-20 p-5  border-2 border-gray-50">
 
-        <div id="items-container" class=" grid sm:grid-cols-2  md:grid-cols-3 xl:grid-cols-4 gap-5">
+        <div id="items-container" class=" grid sm:grid-cols-2 xl:grid-cols-4 gap-5">
              
         </div>
 
         <!-- Open the modal using ID.showModal() method -->
-        <button class="btn" onclick="my_modal_5.showModal()">open modal</button>
+      
         <dialog id="my_modal_5" class="modal modal-bottom sm:modal-middle">
-        <div class="modal-box">
-            <h3 class="text-lg font-bold">Hello!</h3>
-            <p class="py-4">Press ESC key or click the button below to close</p>
-            <div class="modal-action">
-            <form method="dialog">
-                <!-- if there is a button in form, it will close the modal -->
-                <button class="btn">Close</button>
-            </form>
-            </div>
+        <div id="modal-box" class="modal-box space-y-5">/
+            
         </div>
         </dialog>
           

@@ -4,11 +4,19 @@ const itemsContainer = document.getElementById('items-container') ;
 const allBtn = document.getElementById('all-btn') ;
 const openBtn = document.getElementById('open-btn') ;
 const closedBtn = document.getElementById('closed-btn') ;
+  const searchItem =  document.getElementById('search-input')
 console.log(itemsContainer) ;
 
-
+console.log(searchItem) ; 
 const getData = async ()=>{
    const jsonRes = await fetch("https://phi-lab-server.vercel.app/api/v1/lab/issues"); 
+   const jsonData = await jsonRes.json() ; 
+   console.log(jsonData.data) ; 
+   return jsonData.data; 
+}
+
+const getSearchData = async (searchValue)=>{
+   const jsonRes = await  fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issues/search?q=${searchValue}`); 
    const jsonData = await jsonRes.json() ; 
    console.log(jsonData.data) ; 
    return jsonData.data; 
@@ -18,6 +26,7 @@ const getData = async ()=>{
 async function displayData(state){
     let data =await getData() ; 
     itemsContainer.replaceChildren() ; 
+    const searchValue = searchItem.value ; 
    // console.log(data);
    // filter the data according to state 0 - all , 1- open , 2-closed
    if(state == 1 ){
@@ -28,9 +37,15 @@ async function displayData(state){
         data = data.filter((data) => data.status == "closed") ;
         console.log(data) ; 
    }
+   else if(state == 3 &&  searchValue != "") { 
+    
+        // search 
+        data = await getSearchData(searchValue) ; 
+   }
    else{
     // do nothing if state 0 
    }
+    console.log(data) ; 
     issueCount.innerText=`${data.length} Issues` ; 
 
     data.forEach(element => {
@@ -40,7 +55,7 @@ async function displayData(state){
              <div onclick="displayModal(${element.id})" class="issue-card p-5 flex flex-col gap-5 ">
                 <div class="flex flex-wrap justify-between items-center">
                     <img src= ${element.status== "open" ? "./assets/Open-Status.png" : "./assets/Closed-Status.png"} alt="closed">
-                    <h2 class="priority px-4 py-2 text-xl font-bold rounded-4xl">
+                    <h2 class="priority px-4 py-2 text-xl font-bold rounded-3xl ${element.priority == "high" ? "bg-red-100 text-red-600": element.priority == "medium" ?  "bg-yellow-100 text-yellow-400" : "bg-gray-100 text-gray-600"}">
                     ${element.priority}</h2>
                 </div>
 
@@ -49,9 +64,12 @@ async function displayData(state){
                     <h4 class="text-gray-400">${element.description}</h4>
 
                     <div class="flex flex-wrap gap-4 ">
-                        <h3 class="px-4 py-2 text-red-600 bg-red-100 rounded-4xl">BUG</h3>
+                       ${element.labels.map(label =>
+                            `<span class="px-3 py-1 text-sm rounded-full bg-yellow-100 yellow-red-600">
+                                ${label}
+                                </span>`
 
-                        <h3 class="px-4 py-2 text-yellow-600 bg-yellow-200 rounded-4xl">Help Wanted</h3>
+                       ).join("")}
                     </div>
                 </div>
 
@@ -69,18 +87,6 @@ async function displayData(state){
         else{
              newElement.classList.add("border-purple-50",  "border-t-purple-500" ,  "rounded-2xl",  "border-2"); 
         }
-
-        // const priorityElement = newElement.querySelector('.priority') ; 
-
-        // if(priority== "low"){
-        //     priorityElement.classList.add(' bg-purple-100',  'text-purle-600'); // purple
-        // }
-        // else if( priority = "high"){
-        //      priorityElement.classList.add(' bg-red-100',  'text-red-600'); // red 
-        // }
-        // else{
-        //       priorityElement.classList.add(' bg-yellow-100',  'text-yellow-600'); // yellow
-        // }
         console.log(element.status) ;
         console.log(newElement) ;
 
@@ -115,9 +121,50 @@ closedBtn.addEventListener('click' , ()=>{
     displayData(2) ; 
 })
 
+searchItem.addEventListener('keyup' , ()=>{
+    removeBtnActive(); 
+    allBtn.classList.add('btn-primary') ; 
+    displayData(3) ; 
+})
+
 function displayModal(id){
     fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`).then((res) => res.json()).then((json) =>{
         console.log(json.data) ;
+        const issue = json.data; 
+        const modalBox = document.getElementById('modal-box'); 
+        modalBox.innerHTML =`
+         <h2 class="text-2xl font-bold">${issue.title}</h2>
+            <h3><span class="px-2 py-1 text-white ${issue.status == "open" ? "bg-green-400" : "bg-purple-400"} rounded-4xl">${issue.status}</span> &middot <span class="text-gray-400 text-xs">Opened by ${issue.author}</span> &middot <span class="text-gray-400 text-xs">${issue.createdAt}</span></h3>
+            <div class="flex flex-wrap gap-4 ">
+                       ${issue.labels.map(label =>
+                            `<span class="px-3 py-1 text-sm rounded-full bg-yellow-100 yellow-red-600">
+                                ${label}
+                                </span>`
+
+                       ).join("")}
+            </div>
+
+            <p class="text-gray-400 ">${issue.description}</p>
+
+            <div class="flex flex-wrap gap-30 p-4  items-center bg-gray-100">
+                <div class="flex flex-col gap-3 items-center justify-center">
+                    <p class="text-gray-400 ">Assignnee: </p>
+                    <p class="font-bold">${issue.assignee ? issue.assignee : "NA"}</p>
+                </div>
+
+                <div  class="flex flex-col gap-3 items-center justify-center">
+                    <p class="text-gray-400 ">Priority : </p>
+                    <span class="priority text-white px-4 py-2 text-xs rounded-3xl ${issue.priority == "high" ? "bg-red-400": issue.priority == "medium" ?  "bg-yellow-400" : "bg-gray-400"}">
+                    ${issue.priority}</span>
+                </div>
+            </div>
+                <div class="modal-action">
+            <form method="dialog">
+                <!-- if there is a button in form, it will close the modal -->
+                <button class="btn btn-primary">Close</button>
+            </form>
+            </div>`
+
         my_modal_5.showModal();
 
         
@@ -125,6 +172,8 @@ function displayModal(id){
         
     })
 }
+
+
 
 
 
