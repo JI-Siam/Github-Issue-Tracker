@@ -24,6 +24,7 @@ const getSearchData = async (searchValue)=>{
 
 
 async function displayData(state){
+    manageSpinner(1) ; 
     let data =await getData() ; 
     itemsContainer.replaceChildren() ; 
     const searchValue = searchItem.value ; 
@@ -92,6 +93,8 @@ async function displayData(state){
 
         itemsContainer.appendChild(newElement) ; 
     });
+
+    manageSpinner(0);
     
 }
 
@@ -173,6 +176,16 @@ function displayModal(id){
     })
 }
 
+function manageSpinner(state){
+    if(state == true){
+        document.getElementById('spinner').classList.remove('hidden'); 
+        document.getElementById('items-section').classList.add('hidden'); 
+    }
+    else{
+          document.getElementById('spinner').classList.add('hidden'); 
+        document.getElementById('items-section').classList.remove('hidden'); 
+    }
+}
 
 
 
