@@ -1,6 +1,6 @@
 # Github-Issue-Tracker
 
-<h1> Live Link : <a href="">Click here</a> </h1>
+<h1> Live Link : <a href="https://github-issues-tracker-assn.netlify.app/">Click here</a> </h1>
 
 <ul>
     <li>1️⃣ What is the difference between var, let, and const?</li>
@@ -15,8 +15,8 @@
     <li>Let and Const are hoisted whereas var isn't. "Let" lets you change the value after initializaiton but const is unchangeable </li>
     <li>spread operator is used to spread or unpack the content of an array or object </li>
     <li>
-     Map - maps array elements, maybe with some logic and returns a new array
-     Filter - filter items for an array based on conditions and returns a new array.
+     Map - maps array elements, maybe with some logic and returns a new array <br>
+     Filter - filter items for an array based on conditions and returns a new array. <br>
      forEach - loops through array elements.
     </li>
     <li>
